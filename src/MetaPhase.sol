@@ -73,6 +73,41 @@ contract MetaPhase is Monarchy {
         emit CreatedProfile(_address, address(_phase), username);
     }
 
+    /// @notice Will change the links of any non-empty string
+    /// @dev Didn't feel like making an event for this, but can
+    function changeProfile(
+        address _address,
+        string memory username,
+        string memory avatar,
+        string memory background_image,
+        string memory bio,
+        string memory twitter,
+        string memory github,
+        string memory website
+    ) public onlyKing {
+        Phase _phase = phase[_address];
+
+        // If username string is not empty
+        // Set Phase symbol to false and ensure username is also false 
+        if (bytes(username).length > 0 ) {
+            usernames[_phase.symbol()] = false;
+            require(!usernames[username], "USERNAME_TAKEN!");
+        }
+
+        _phase.changeProfile(
+            username,
+            avatar,
+            background_image,
+            bio,
+            twitter, 
+            github, 
+            website
+        );
+
+        usernames[username] = true;
+    }
+
+
     /*///////////////////////////////////////////////////////////////
                                FOLLOWING
     //////////////////////////////////////////////////////////////*/

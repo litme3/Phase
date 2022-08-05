@@ -80,6 +80,36 @@ contract Phase is ERC721URIStorage, Monarchy {
     }
 
     /*///////////////////////////////////////////////////////////////
+                              CHANGE LINK
+    //////////////////////////////////////////////////////////////*/
+
+    /// @notice if argument isn't empty string, changes global value
+    /// @dev changed OZ's ERC721.sol _symbol from private to internal
+    function changeProfile(
+        string memory _username,
+        string memory _avatar,
+        string memory _background_image,
+        string memory _bio,
+        string memory _twitter,
+        string memory _github,
+        string memory _website
+    ) public onlyMonarch {
+        _symbol = bytes(_username).length > 0 ? _username : _symbol;
+
+        avatar = bytes(_avatar).length > 0 ? _avatar : avatar;
+
+        background_image = bytes(_background_image).length > 0 ? _background_image : background_image;
+        
+        bio = bytes(_bio).length > 0 ? _bio : bio;
+
+        twitter = bytes(_twitter).length > 0 ? _twitter : twitter;
+
+        github = bytes(_github).length > 0 ? _github : github;
+
+        website = bytes(_website).length > 0 ? _website : website;
+    }
+
+    /*///////////////////////////////////////////////////////////////
                                 DISPLAY
     //////////////////////////////////////////////////////////////*/
 
