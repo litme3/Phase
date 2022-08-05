@@ -81,7 +81,7 @@ contract MetaPhase is Monarchy {
 
     event Unfollow(address indexed unfollower, address indexed unfollowing, address indexed phase_profile);
 
-    /// @notice Mints the hello
+    /// @notice Mints Phase Profile
     /// @param follower Person receiving NFT
     /// @param following Owner of the Phase Profile to be minted
     /// @param metadata JSON NFT schema of the links of Phase Profile
