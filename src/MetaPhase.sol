@@ -109,6 +109,18 @@ contract MetaPhase is Monarchy {
         emit Unfollow(unfollower, unfollowing, address(_phase));
     }
 
+    /*///////////////////////////////////////////////////////////////
+                               DISPLAY
+    //////////////////////////////////////////////////////////////*/
 
+    /// @param _address of phase owner
+    function displayPhase(address _address) public view returns (string[7] memory profile) {
+        profile = phase[_address].display();
+    }
+
+    /// @notice returns an array of phase addresses
+    function viewPhases() public view returns (Phase[] memory) {
+        return phases;
+    }
 
 }
