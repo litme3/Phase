@@ -24,7 +24,7 @@ contract Phase is ERC721URIStorage, Monarchy {
 
     string public avatar;
 
-    string public background_image;
+    string public banner;
     
     string public bio;
 
@@ -34,12 +34,12 @@ contract Phase is ERC721URIStorage, Monarchy {
         address _address,
         string memory _username,
         string memory _avatar,
-        string memory _background_image,
+        string memory _banner,
         string memory _bio,
         string[][] memory _links
     ) ERC721("Phase Profile", _username) Monarchy(_address) {
         avatar = _avatar;
-        background_image = _background_image;
+        banner = _banner;
         bio = _bio;
         links = _links;
     }
@@ -80,7 +80,7 @@ contract Phase is ERC721URIStorage, Monarchy {
     function changeProfile(
         string memory _username,
         string memory _avatar,
-        string memory _background_image,
+        string memory _banner,
         string memory _bio,
         string[][] memory _links
     ) public onlyMonarch {
@@ -88,7 +88,7 @@ contract Phase is ERC721URIStorage, Monarchy {
 
         avatar = _avatar;
 
-        background_image = _background_image;
+        banner = _banner;
         
         bio = _bio;
 
@@ -96,9 +96,22 @@ contract Phase is ERC721URIStorage, Monarchy {
     }
 
     /*///////////////////////////////////////////////////////////////
+                                MISC
+    //////////////////////////////////////////////////////////////*/
+
+    /// @dev To better work with Zora's offer module
+    function incrementID() public onlyKing {
+        ++id;
+    }
+
+    /*///////////////////////////////////////////////////////////////
                                 DISPLAY
     //////////////////////////////////////////////////////////////*/
 
+    function displayBio() public view returns (string[4] memory) {
+        return [_symbol, avatar, banner, bio];
+    }
+    
     function displayLinks() public view returns (string[][] memory) {
         return links;
     }

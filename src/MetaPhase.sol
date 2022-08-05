@@ -44,7 +44,7 @@ contract MetaPhase is Monarchy {
         address _address, 
         string memory username,
         string memory avatar,
-        string memory background_image,
+        string memory banner,
         string memory bio,
         string[][] memory links
     ) public onlyKing {
@@ -55,7 +55,7 @@ contract MetaPhase is Monarchy {
             _address,
             username, 
             avatar,
-            background_image,
+            banner,
             bio,
             links
         );
@@ -75,7 +75,7 @@ contract MetaPhase is Monarchy {
         address _address,
         string memory username,
         string memory avatar,
-        string memory background_image,
+        string memory banner,
         string memory bio,
         string[][] memory links
     ) public onlyKing {
@@ -90,7 +90,7 @@ contract MetaPhase is Monarchy {
         _phase.changeProfile(
             username,
             avatar,
-            background_image,
+            banner,
             bio,
             links
         );
@@ -135,14 +135,33 @@ contract MetaPhase is Monarchy {
     }
 
     /*///////////////////////////////////////////////////////////////
+                              MISC. INTERFACE
+    //////////////////////////////////////////////////////////////*/
+
+    /// @notice iterates token id for phase +1
+    /// @param _address eoa of phase owner
+    function incrementPhaseID(address _address) public onlyKing {
+        phase[_address].incrementID();
+    }
+
+    /*///////////////////////////////////////////////////////////////
                                DISPLAY
     //////////////////////////////////////////////////////////////*/
 
-    /// @notice returns nested array of links
-    /// @dev other profile info (name, avatar, banner, bio) will need to be queried manually
+    /// @notice returns [username, avatar, banner, bio] of phase
     /// @param _address of phase owner
+    function displayBio(address _address) public view returns (string[4] memory bio_info) {
+        bio_info = phase[_address].displayBio();
+    }
+
+    /// @notice returns nested array of links
     function displayLinks(address _address) public view returns (string[][] memory links) {
         links = phase[_address].displayLinks();
+    }
+
+    /// @notice returns current token id of phase
+    function phaseID(address _address) public view returns (uint token_id) {
+        token_id = phase[_address].id();
     }
 
     /// @notice returns an array of phase addresses
