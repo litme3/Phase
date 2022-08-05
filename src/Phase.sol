@@ -108,11 +108,11 @@ contract Phase is ERC721URIStorage, Monarchy {
                                 DISPLAY
     //////////////////////////////////////////////////////////////*/
 
-    function displayBio() public view returns (string[4] memory) {
+    function viewProfile() public view returns (string[4] memory) {
         return [_symbol, avatar, bio, banner];
     }
     
-    function displayLinks() public view returns (string[][] memory) {
+    function viewLinks() public view returns (string[][] memory) {
         return links;
     }
 

@@ -25,8 +25,8 @@ contract MetaPhase is Monarchy {
     /// @notice address => phase profile
     mapping (address => Phase) public phase;
 
-    /// @notice array of phases
-    Phase[] public phases;
+    /// @notice array of phase owners
+    address[] public phases;
 
     event CreatedProfile(
         address indexed user_address, 
@@ -64,7 +64,7 @@ contract MetaPhase is Monarchy {
 
         usernames[username] = true;
 
-        phases.push(_phase);
+        phases.push(_address);
 
         emit CreatedProfile(_address, address(_phase), username);
     }
@@ -150,23 +150,23 @@ contract MetaPhase is Monarchy {
 
     /// @notice returns [username, avatar, banner, bio] of phase
     /// @param _address of phase owner
-    function displayBio(address _address) public view returns (string[4] memory bio_info) {
-        bio_info = phase[_address].displayBio();
+    function viewProfile(address _address) public view returns (string[4] memory bio_info) {
+        bio_info = phase[_address].viewProfile();
     }
 
     /// @notice returns nested array of links
-    function displayLinks(address _address) public view returns (string[][] memory links) {
-        links = phase[_address].displayLinks();
+    function viewLinks(address _address) public view returns (string[][] memory links) {
+        links = phase[_address].viewLinks();
+    }
+
+    /// @notice returns an array of all phase owner addresses
+    function viewPhases() public view returns (address[] memory) {
+        return phases;
     }
 
     /// @notice returns current token id of phase
     function phaseID(address _address) public view returns (uint token_id) {
         token_id = phase[_address].id();
-    }
-
-    /// @notice returns an array of phase addresses
-    function viewPhases() public view returns (Phase[] memory) {
-        return phases;
     }
 
 }
