@@ -9,7 +9,7 @@ import "./Phase.sol";
 /// @notice Creates & interfaces with Phase Profiles
 contract MetaPhase is Monarchy {
 
-    /*//////////////////////////////////////////////////////////////
+    /*///////////////////////////////////////////////////////////////
                             INITIALIZATION
     //////////////////////////////////////////////////////////////*/
 
@@ -46,9 +46,7 @@ contract MetaPhase is Monarchy {
         string memory avatar,
         string memory background_image,
         string memory bio,
-        string memory twitter,
-        string memory github,
-        string memory website
+        string[][] memory links
     ) public onlyKing {
         require(bytes(username).length > 0, "EMPTY_USERNAME!");
         require(!usernames[username], "USERNAME_TAKEN!");
@@ -59,9 +57,7 @@ contract MetaPhase is Monarchy {
             avatar,
             background_image,
             bio,
-            twitter, 
-            github, 
-            website
+            links
         );
 
         phase[_address] = _phase;
@@ -73,7 +69,7 @@ contract MetaPhase is Monarchy {
         emit CreatedProfile(_address, address(_phase), username);
     }
 
-    /// @notice Will change the links of any non-empty string
+    /// @notice Will set new profile 
     /// @dev Didn't feel like making an event for this, but can
     function changeProfile(
         address _address,
@@ -81,32 +77,26 @@ contract MetaPhase is Monarchy {
         string memory avatar,
         string memory background_image,
         string memory bio,
-        string memory twitter,
-        string memory github,
-        string memory website
+        string[][] memory links
     ) public onlyKing {
+        require(bytes(username).length > 0, "EMPTY_USERNAME!");
+
         Phase _phase = phase[_address];
 
-        // If username string is not empty
-        // Set Phase symbol to false and ensure username is also false 
-        if (bytes(username).length > 0 ) {
-            usernames[_phase.symbol()] = false;
-            require(!usernames[username], "USERNAME_TAKEN!");
-        }
+        usernames[_phase.symbol()] = false;
+
+        require(!usernames[username], "USERNAME_TAKEN!");
 
         _phase.changeProfile(
             username,
             avatar,
             background_image,
             bio,
-            twitter, 
-            github, 
-            website
+            links
         );
 
         usernames[username] = true;
     }
-
 
     /*///////////////////////////////////////////////////////////////
                                FOLLOWING
@@ -148,9 +138,11 @@ contract MetaPhase is Monarchy {
                                DISPLAY
     //////////////////////////////////////////////////////////////*/
 
+    /// @notice returns nested array of links
+    /// @dev other profile info (name, avatar, banner, bio) will need to be queried manually
     /// @param _address of phase owner
-    function displayPhase(address _address) public view returns (string[7] memory profile) {
-        profile = phase[_address].display();
+    function displayLinks(address _address) public view returns (string[][] memory links) {
+        links = phase[_address].displayLinks();
     }
 
     /// @notice returns an array of phase addresses

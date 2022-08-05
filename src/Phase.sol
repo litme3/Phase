@@ -28,11 +28,7 @@ contract Phase is ERC721URIStorage, Monarchy {
     
     string public bio;
 
-    string public twitter;
-
-    string public github;
-
-    string public website;
+    string[][] public links;
 
     constructor(
         address _address,
@@ -40,16 +36,12 @@ contract Phase is ERC721URIStorage, Monarchy {
         string memory _avatar,
         string memory _background_image,
         string memory _bio,
-        string memory _twitter,
-        string memory _github,
-        string memory _website
+        string[][] memory _links
     ) ERC721("Phase Profile", _username) Monarchy(_address) {
         avatar = _avatar;
         background_image = _background_image;
         bio = _bio;
-        twitter = _twitter;
-        github = _github;
-        website = _website;
+        links = _links;
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -65,7 +57,7 @@ contract Phase is ERC721URIStorage, Monarchy {
 
         owner[to] = id;
 
-        id++;
+        ++id;
     }
 
     /// @dev TEMP Need to make sure users can't burn random ppl's tokens!
@@ -80,7 +72,7 @@ contract Phase is ERC721URIStorage, Monarchy {
     }
 
     /*///////////////////////////////////////////////////////////////
-                              CHANGE LINK
+                              CHANGE PROFILE
     //////////////////////////////////////////////////////////////*/
 
     /// @notice if argument isn't empty string, changes global value
@@ -90,31 +82,25 @@ contract Phase is ERC721URIStorage, Monarchy {
         string memory _avatar,
         string memory _background_image,
         string memory _bio,
-        string memory _twitter,
-        string memory _github,
-        string memory _website
+        string[][] memory _links
     ) public onlyMonarch {
-        _symbol = bytes(_username).length > 0 ? _username : _symbol;
+        _symbol = _username;
 
-        avatar = bytes(_avatar).length > 0 ? _avatar : avatar;
+        avatar = _avatar;
 
-        background_image = bytes(_background_image).length > 0 ? _background_image : background_image;
+        background_image = _background_image;
         
-        bio = bytes(_bio).length > 0 ? _bio : bio;
+        bio = _bio;
 
-        twitter = bytes(_twitter).length > 0 ? _twitter : twitter;
-
-        github = bytes(_github).length > 0 ? _github : github;
-
-        website = bytes(_website).length > 0 ? _website : website;
+        links = _links;
     }
 
     /*///////////////////////////////////////////////////////////////
                                 DISPLAY
     //////////////////////////////////////////////////////////////*/
 
-    function display() public view returns (string[7] memory profile) {
-        return [ _symbol, avatar, background_image, bio, twitter, github, website ];
+    function displayLinks() public view returns (string[][] memory) {
+        return links;
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -130,4 +116,6 @@ contract Phase is ERC721URIStorage, Monarchy {
         require(to == address(0) || from == address(0), "SOULBOUND");
         tokenId;
     } 
+
+    
 }
