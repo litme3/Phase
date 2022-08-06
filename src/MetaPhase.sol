@@ -48,6 +48,7 @@ contract MetaPhase is Monarchy {
         string memory bio,
         string[][] memory links
     ) public onlyKing {
+        require(address(phase[_address]) == address(0), "PHASE_ALREADY_MADE");
         require(bytes(username).length > 0, "EMPTY_USERNAME!");
         require(!usernames[username], "USERNAME_TAKEN!");
 
