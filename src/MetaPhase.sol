@@ -19,8 +19,8 @@ contract MetaPhase is Monarchy {
                             PHASE PROFILE 
     //////////////////////////////////////////////////////////////*/
 
-    /// @notice username => whether or not it's taken
-    mapping (string => bool) public usernames;
+    /// @notice username => owner
+    mapping (string => address) public usernames;
 
     /// @notice address => phase profile
     mapping (address => Phase) public phase;
@@ -50,7 +50,7 @@ contract MetaPhase is Monarchy {
     ) public onlyKing {
         require(address(phase[_address]) == address(0), "PHASE_ALREADY_MADE");
         require(bytes(username).length > 0, "EMPTY_USERNAME!");
-        require(!usernames[username], "USERNAME_TAKEN!");
+        require(usernames[username] == address(0), "USERNAME_TAKEN!");
 
         Phase _phase = new Phase(
             _address,
@@ -63,7 +63,7 @@ contract MetaPhase is Monarchy {
 
         phase[_address] = _phase;
 
-        usernames[username] = true;
+        usernames[username] = _address;
 
         phases.push(_address);
 
@@ -84,9 +84,9 @@ contract MetaPhase is Monarchy {
 
         Phase _phase = phase[_address];
 
-        usernames[_phase.symbol()] = false;
+        usernames[_phase.symbol()] = address(0);
 
-        require(!usernames[username], "USERNAME_TAKEN!");
+        require(usernames[username] == address(0), "USERNAME_TAKEN!");
 
         _phase.changeProfile(
             username,
@@ -96,7 +96,7 @@ contract MetaPhase is Monarchy {
             links
         );
 
-        usernames[username] = true;
+        usernames[username] = _address;
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -125,7 +125,7 @@ contract MetaPhase is Monarchy {
         emit Follow(follower, following, address(_phase));
     }
 
-    function unfollow (address unfollower, address unfollowing) public onlyKing {
+    function removeFollow (address unfollower, address unfollowing) public onlyKing {
         Phase _phase = phase[unfollowing];
 
         require(_phase.balanceOf(unfollower) > 0, "NOT_FOLLOWING!");
@@ -163,6 +163,12 @@ contract MetaPhase is Monarchy {
     /// @notice returns an array of all phase owner addresses
     function viewPhases() public view returns (address[] memory) {
         return phases;
+    }
+
+    function isFollowing(address follower, address following) public view returns (bool) {
+        Phase _phase = phase[following];
+
+        return _phase.balanceOf(follower) > 0;
     }
 
     /// @notice returns current token id of phase

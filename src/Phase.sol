@@ -30,6 +30,8 @@ contract Phase is ERC721URIStorage, Monarchy {
 
     string[][] public links;
 
+    string[] public messages;
+
     constructor(
         address _address,
         string memory _username,
@@ -51,13 +53,13 @@ contract Phase is ERC721URIStorage, Monarchy {
     function mint(address to, string calldata metadata) public onlyMonarch {
         require(balanceOf(to) == 0, "ALREADY_FOLLOWS!");
 
+        ++id;
+
         _mint(to, id);
 
         _setTokenURI(id, metadata);
 
         owner[to] = id;
-
-        ++id;
     }
 
     /// @dev TEMP Need to make sure users can't burn random ppl's tokens!
@@ -104,6 +106,7 @@ contract Phase is ERC721URIStorage, Monarchy {
         ++id;
     }
 
+
     /*///////////////////////////////////////////////////////////////
                                 DISPLAY
     //////////////////////////////////////////////////////////////*/
@@ -114,6 +117,10 @@ contract Phase is ERC721URIStorage, Monarchy {
     
     function viewLinks() public view returns (string[][] memory) {
         return links;
+    }
+
+    function viewMessages() public view onlyMonarch returns (string[] memory) {
+        return messages;
     }
 
     /*///////////////////////////////////////////////////////////////
