@@ -16,9 +16,12 @@ contract Phase is ERC721URIStorage, Monarchy {
                             INITIALIZATION
     //////////////////////////////////////////////////////////////*/
 
+    /// @notice address of phase owner
+    address public immutable owner;
+
     /// @notice address => id of nft they hold
-    mapping (address => uint) public owner; 
-    
+    mapping (address => uint) public holder; 
+
     /// @notice NFT ID
     uint public id = 1;
 
@@ -30,6 +33,8 @@ contract Phase is ERC721URIStorage, Monarchy {
 
     string[][] public links;
 
+    string[] public messages;
+
     constructor(
         address _address,
         string memory _username,
@@ -38,6 +43,7 @@ contract Phase is ERC721URIStorage, Monarchy {
         string memory _bio,
         string[][] memory _links
     ) ERC721("Phase Profile", _username) Monarchy(_address) {
+        owner = _address;
         avatar = _avatar;
         banner = _banner;
         bio = _bio;
@@ -55,7 +61,7 @@ contract Phase is ERC721URIStorage, Monarchy {
 
         _setTokenURI(id, metadata);
 
-        owner[to] = id;
+        holder[to] = id;
 
         ++id;
     }
@@ -64,11 +70,11 @@ contract Phase is ERC721URIStorage, Monarchy {
     function burn(address unfollower) public {
         require(balanceOf(unfollower) > 0, "NOT_FOLLOWING!");
 
-        uint _id = owner[unfollower];
+        uint _id = holder[unfollower];
 
         _burn(_id);
 
-        owner[unfollower] = 0;
+        holder[unfollower] = 0;
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -93,15 +99,6 @@ contract Phase is ERC721URIStorage, Monarchy {
         bio = _bio;
 
         links = _links;
-    }
-
-    /*///////////////////////////////////////////////////////////////
-                                MISC
-    //////////////////////////////////////////////////////////////*/
-
-    /// @dev To better work with Zora's offer module
-    function incrementID() public onlyKing {
-        ++id;
     }
 
     /*///////////////////////////////////////////////////////////////

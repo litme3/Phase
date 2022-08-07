@@ -19,8 +19,8 @@ contract MetaPhase is Monarchy {
                             PHASE PROFILE 
     //////////////////////////////////////////////////////////////*/
 
-    /// @notice username => whether or not it's taken
-    mapping (string => bool) public usernames;
+    /// @notice username => owner
+    mapping (string => address) public usernames;
 
     /// @notice address => phase profile
     mapping (address => Phase) public phase;
@@ -50,7 +50,7 @@ contract MetaPhase is Monarchy {
     ) public onlyKing {
         require(address(phase[_address]) == address(0), "PHASE_ALREADY_MADE");
         require(bytes(username).length > 0, "EMPTY_USERNAME!");
-        require(!usernames[username], "USERNAME_TAKEN!");
+        require(usernames[username] == address(0), "USERNAME_TAKEN!");
 
         Phase _phase = new Phase(
             _address,
@@ -63,7 +63,7 @@ contract MetaPhase is Monarchy {
 
         phase[_address] = _phase;
 
-        usernames[username] = true;
+        usernames[username] = _address;
 
         phases.push(_address);
 
@@ -84,9 +84,9 @@ contract MetaPhase is Monarchy {
 
         Phase _phase = phase[_address];
 
-        usernames[_phase.symbol()] = false;
+        usernames[_phase.symbol()] = address(0);
 
-        require(!usernames[username], "USERNAME_TAKEN!");
+        require(usernames[username] == address(0), "USERNAME_TAKEN!");
 
         _phase.changeProfile(
             username,
@@ -96,7 +96,7 @@ contract MetaPhase is Monarchy {
             links
         );
 
-        usernames[username] = true;
+        usernames[username] = _address;
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -109,40 +109,30 @@ contract MetaPhase is Monarchy {
 
     /// @notice Mints Phase Profile
     /// @param follower Person receiving NFT
-    /// @param following Owner of the Phase Profile to be minted
+    /// @param profile Owner of the Phase Profile to be minted
     /// @param metadata JSON NFT schema of the links of Phase Profile
     function follow (
         address follower, 
-        address following, 
+        address profile, 
         string calldata metadata
     ) public onlyKing {
-        Phase _phase = phase[following];
+        Phase _phase = phase[profile];
 
         require(_phase.balanceOf(follower) == 0, "ALREADY_FOLLOWING!");
 
         _phase.mint(follower, metadata);
 
-        emit Follow(follower, following, address(_phase));
+        emit Follow(follower, profile, address(_phase));
     }
 
-    function unfollow (address unfollower, address unfollowing) public onlyKing {
-        Phase _phase = phase[unfollowing];
+    function removeFollow (address unfollower, address profile) public onlyKing {
+        Phase _phase = phase[profile];
 
         require(_phase.balanceOf(unfollower) > 0, "NOT_FOLLOWING!");
 
         _phase.burn(unfollower);
 
-        emit Unfollow(unfollower, unfollowing, address(_phase));
-    }
-
-    /*///////////////////////////////////////////////////////////////
-                              MISC. INTERFACE
-    //////////////////////////////////////////////////////////////*/
-
-    /// @notice iterates token id for phase +1
-    /// @param _address eoa of phase owner
-    function incrementPhaseID(address _address) public onlyKing {
-        phase[_address].incrementID();
+        emit Unfollow(unfollower, profile, address(_phase));
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -160,9 +150,20 @@ contract MetaPhase is Monarchy {
         links = phase[_address].viewLinks();
     }
 
-    /// @notice returns an array of all phase owner addresses
+    /// @notice returns an array of all phases
     function viewPhases() public view returns (address[] memory) {
         return phases;
+    }
+
+    /// @notice returns owner of @param profile's @param token_id
+    function ownerOf(address profile, uint token_id) public view returns (address) {
+        return phase[profile].ownerOf(token_id);
+    }
+
+    function isFollowing(address follower, address following) public view returns (bool) {
+        Phase _phase = phase[following];
+
+        return _phase.balanceOf(follower) > 0;
     }
 
     /// @notice returns current token id of phase

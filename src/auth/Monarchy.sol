@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 /// @notice Minimal Primary & Secondary Auth with a Noble Aesthetic
 abstract contract Monarchy {
+    
     /*//////////////////////////////////////////////////////////////
                             INITIALIZATION
     //////////////////////////////////////////////////////////////*/
